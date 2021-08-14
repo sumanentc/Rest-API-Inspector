@@ -87,10 +87,9 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
-Your Name - [@nerd_dassum](https://twitter.com/nerd_dassum) - email@example.com
+Your Name - [@nerd_dassum](https://twitter.com/nerd_dassum) - sumanentc@gmail.com
 
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
-
+Project Link: [Rest-API-Inspector](https://github.com/sumanentc/Rest-API-Inspector)
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
