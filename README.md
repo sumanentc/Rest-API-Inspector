@@ -75,6 +75,7 @@ This is an example of how to list things you need to use the software and how to
 ## Usage
 
 Please refer to the attached clip on how to use the REST API Inspector Plugin after download.
+
 ![Rest API Inspector](./assets/inspector.mp4)
 
 <!-- LICENSE -->
