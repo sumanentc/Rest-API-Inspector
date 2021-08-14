@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="jquery-3.3.1.min.js"></script>
+    <script src="colResizable-1.6.min.js"></script>
+    <script src="contentscript.js"></script>
+  </head>
+
+  <body>
+    <h4>Rest API Inspector</h4>
+    <div class="inp">
+      <input type="submit" id="inspect" value="Inspect" class="btn-input"/>
+      <input type="text" id="search" placeholder="Type to filter">
+    </div>
+    </br>
+    <table id="restAPITable">
+      <thead>
+        <tr>
+          <th>Method</th>
+          <th>URL</th>
+          <th>Status</th>
+          <th>ET</th>
+          <th>DL</th>
+        </tr>
+      </thead>
+      <tbody id="restAPIBody"></tbody>
+    </table>
+  </body>
+</html>

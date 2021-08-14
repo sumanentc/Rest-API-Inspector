@@ -1,0 +1,52 @@
+.inp input {
+  background-color: #ffb703;
+  border: 2px solid #8ecae6;
+  color: #023047;
+  padding: 5px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 10px;
+  margin: 2px 2px;
+  cursor: pointer;
+  border-radius: 12px;
+  transition-duration: 0.4s;
+}
+
+.btn-input:hover {
+  background-color: #219ebc;
+}
+
+#search {
+  width: 140px;
+}
+
+#restAPITable {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#restAPITable td,
+#restAPITable th {
+  border: 1px solid #023047;
+  padding: 2px;
+  word-wrap: break-word;
+  max-width: 400px;
+}
+
+#restAPITable tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+#restAPITable tr:hover {
+  background-color: #ffb703;
+}
+
+#restAPITable th {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  text-align: center;
+  background-color: #219ebc;
+  color: #f2f2f2;
+}
