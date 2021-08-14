@@ -1,6 +1,6 @@
 {
   "name": "Rest API Inspector",
-  "description": "This will inspect all the REST API calls and download the API URL along with payload and response",
+  "description": "This will inspect all the REST API calls and download the API URL along with payload and request details",
   "version": "1.0",
   "manifest_version": 2,
   "icons": {
@@ -12,15 +12,7 @@
     "scripts": ["background.js"],
     "persistent": true
   },
-  "permissions": [
-    "tabs",
-    "activeTab",
-    "<all_urls>",
-    "webRequest",
-    "webRequestBlocking",
-    "debugger",
-    "storage"
-  ],
+  "permissions": ["<all_urls>", "webRequest", "webRequestBlocking", "storage"],
   "browser_action": {
     "default_icon": {
       "16": "icon16.png",
