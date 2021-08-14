@@ -26,14 +26,14 @@
 
 ![Rest API Inspector](./assets/inspector.png)
 
-REST API Inspector is a Chrome Extensions which helps you inspect all the REST API calls made by any website. Instead of going to the inspect mode of Google Chrome and checking the REST API calls made by any website, this extension can be used. This extension has the below features:
+REST API Inspector is a Chrome Extension, which helps you inspect all the REST API calls made by any website. Instead of using the Inspect mode of Google Chrome to manually check the REST API calls made by any website, this extension allows a ready visual access. This extension has the below features:
 
-1. Get all the REST API calls made by any website
-2. Time taken by each REST API call
-3. Status of each REST API call
-4. Request content of the REST API call
-5. Download the REST API call content for testing or validation
-6. Option to search the API from the list
+1. **A Ready List:** Get all the REST API calls made by any website
+2. **Time Taken:** Note the time taken by each REST API call
+3. **Status:** See the Pending, Complete or Error status of each REST API call
+4. **API Details:** Understand the request content of the REST API call
+5. **Download:** Download the REST API call content for testing or validation
+6. **Search:** Have an option to search the required API from the list
 
 ### Built With
 
