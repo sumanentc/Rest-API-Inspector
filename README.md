@@ -78,7 +78,7 @@ This is an example of how to list things you need to use the software and how to
 
 You can refer to the attached clip on how to use the REST API Inspector Plugin after download.
 
-https://github.com/sumanentc/Rest-API-Inspector/blob/master/assets/inspector1.m4v
+https://youtu.be/w-BY-OHYSZY
 
 <!-- LICENSE -->
 
