@@ -75,7 +75,9 @@ You should use Chrome Browser and **REST API Inspector** extension should be ena
 
 You can refer to the attached clip on how to use the REST API Inspector Plugin after download.
 
-[![REST API Inspector](./icon128.png)](https://youtu.be/w-BY-OHYSZY)
+Video demonstration (click the picture):
+
+[![REST API Inspector](./assets/inspector1.png)](https://youtu.be/w-BY-OHYSZY)
 
 <!-- LICENSE -->
 
