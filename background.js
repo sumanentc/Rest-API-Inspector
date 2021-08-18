@@ -149,12 +149,16 @@ const clearStorageData = (key) =>
 
 function getRequestBody(details) {
   if (details && details.requestBody && details.requestBody.raw) {
-    return decodeURIComponent(
-      String.fromCharCode.apply(
-        null,
-        new Uint8Array(details.requestBody.raw[0].bytes)
-      )
-    );
+    try {
+      return decodeURIComponent(
+        String.fromCharCode.apply(
+          null,
+          new Uint8Array(details.requestBody.raw[0].bytes)
+        )
+      );
+    } catch (error) {
+      console.info(error);
+    }
   }
 }
 

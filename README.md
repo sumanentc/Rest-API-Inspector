@@ -51,9 +51,12 @@ REST API Inspector is a Chrome Extension, which helps you inspect all the REST A
 
 You should use Chrome Browser and **REST API Inspector** extension should be enabled in the browser
 
-[![Extension](./extension.png)]
+![Extension](./extension.png)
 
 ### Installation
+
+Search for REST API Inspector in Chrome Web Store.
+![Extension](./assets/inspector3.png)
 
 <!-- USAGE EXAMPLES -->
 
