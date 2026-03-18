@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Rest API Inspector</title>
+  <!--
+    Fonts: JetBrains Mono (code) + Syne (headings).
+    Loaded from Google Fonts with a system-font fallback stack so the UI
+    remains fully functional when offline.
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Syne:wght@700;800&display=swap" />
+  <style>
+    /* ── Design tokens ──────────────────────────────────────────────────── */
+    :root {
+      --bg:      #0d0f14;
+      --bg2:     #13161d;
+      --bg3:     #1a1e28;
+      --bg4:     #222736;
+      --border:  #2a2f3e;
+      --accent:  #e8734a;
+      --accent2: #f0a070;
+      --text:    #e2e8f4;
+      --text2:   #8b95b0;
+      --text3:   #545e7a;
+      --green:   #4ade80;
+      --red:     #f87171;
+      --yellow:  #fbbf24;
+      --blue:    #60a5fa;
+      --purple:  #a78bfa;
+      --cyan:    #22d3ee;
+      /* Fallback stacks if Google Fonts are unavailable (offline) */
+      --mono: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', 'Consolas', 'Menlo', monospace;
+      --sans: 'Syne', 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+      --r: 6px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 820px; height: 600px;
+      background: var(--bg); color: var(--text);
+      font-family: var(--mono); font-size: 12px;
+      display: flex; flex-direction: column; overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Header ─────────────────────────────────────────────────────────── */
+    #header {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 12px;
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .logo {
+      width: 26px; height: 26px; border-radius: 6px;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; flex-shrink: 0; user-select: none;
+    }
+    .title {
+      font-family: var(--sans); font-size: 14px; font-weight: 800;
+      white-space: nowrap; flex-shrink: 0; letter-spacing: -0.2px;
+    }
+    .title span { color: var(--accent); }
+    #reqCount { font-size: 10px; color: var(--text3); white-space: nowrap; flex-shrink: 0; }
+    #reqCount strong { color: var(--accent); }
+    .h-spacer { flex: 1; min-width: 8px; }
+    .header-btns { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 10px;
+      border: 1px solid var(--border); border-radius: var(--r);
+      background: var(--bg3); color: var(--text2);
+      cursor: pointer; font-family: var(--mono); font-size: 11px;
+      white-space: nowrap; flex-shrink: 0;
+      transition: border-color .15s, color .15s, background .15s;
+      user-select: none;
+    }
+    .btn:hover         { border-color: var(--accent); color: var(--text); background: var(--bg4); }
+    .btn:active        { transform: translateY(1px); }
+    .btn.danger:hover  { border-color: var(--red); color: var(--red); background: var(--bg4); }
+    .btn.primary       { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+    .btn.primary:hover { background: var(--accent2); border-color: var(--accent2); }
+    .btn.paused        { border-color: var(--yellow); color: var(--yellow); }
+
+    /* ── Toolbar ────────────────────────────────────────────────────────── */
+    #toolbar {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 12px;
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .search-wrap { flex: 1; min-width: 0; position: relative; }
+    .search-wrap svg {
+      position: absolute; left: 8px; top: 50%; transform: translateY(-50%);
+      color: var(--text3); pointer-events: none;
+    }
+    .search-wrap input {
+      width: 100%; padding: 5px 8px 5px 28px;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--r); color: var(--text);
+      font-family: var(--mono); font-size: 12px; outline: none;
+      transition: border-color .15s;
+    }
+    .search-wrap input:focus      { border-color: var(--accent); }
+    .search-wrap input::placeholder { color: var(--text3); }
+
+    .filter-group { display: flex; gap: 3px; flex-shrink: 0; }
+    .filter-btn {
+      padding: 4px 8px;
+      border: 1px solid var(--border); border-radius: var(--r);
+      background: transparent; color: var(--text3);
+      cursor: pointer; font-family: var(--mono); font-size: 10px;
+      font-weight: 500; letter-spacing: .3px;
+      transition: all .15s; white-space: nowrap; user-select: none;
+    }
+    .filter-btn:hover  { color: var(--text); border-color: var(--text3); }
+    .filter-btn.active { background: var(--bg4); border-color: var(--accent); color: var(--accent); }
+
+    /* ── Main layout ────────────────────────────────────────────────────── */
+    #main { display: flex; flex: 1; overflow: hidden; }
+
+    /* ── List panel ─────────────────────────────────────────────────────── */
+    #listPanel {
+      width: 340px; flex-shrink: 0;
+      display: flex; flex-direction: column;
+      border-right: 1px solid var(--border); overflow: hidden;
+    }
+    .list-col-hdr {
+      display: grid; grid-template-columns: 56px 1fr 56px 52px;
+      gap: 4px; padding: 5px 10px;
+      background: var(--bg3); border-bottom: 1px solid var(--border);
+      color: var(--text3); font-size: 10px;
+      text-transform: uppercase; letter-spacing: .4px; font-weight: 500;
+      flex-shrink: 0;
+    }
+    #requestList { flex: 1; overflow-y: auto; }
+
+    /* Empty / no-match messages */
+    .state-msg {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 8px; padding: 28px 16px; text-align: center;
+      color: var(--text3); min-height: 120px;
+    }
+    .state-msg .ico { font-size: 28px; opacity: .22; user-select: none; }
+    .state-msg p    { font-size: 11px; line-height: 1.7; }
+
+    /* Request rows */
+    .req-row {
+      display: grid; grid-template-columns: 56px 1fr 56px 52px;
+      gap: 4px; align-items: center;
+      padding: 6px 10px; border-bottom: 1px solid var(--border);
+      cursor: pointer; transition: background .1s;
+    }
+    .req-row:hover        { background: var(--bg3); }
+    .req-row.selected     { background: var(--bg4); border-left: 2px solid var(--accent); padding-left: 8px; }
+    .req-row.pending-row  { opacity: .75; }
+
+    /* Method badges */
+    .mbadge {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 2px 4px; border-radius: 3px;
+      font-size: 9px; font-weight: 600; letter-spacing: .2px;
+      width: 48px; text-align: center; user-select: none;
+    }
+    .GET     { background: rgba(74,222,128,.12);  color: var(--green);  border: 1px solid rgba(74,222,128,.25); }
+    .POST    { background: rgba(96,165,250,.12);  color: var(--blue);   border: 1px solid rgba(96,165,250,.25); }
+    .PUT     { background: rgba(251,191,36,.12);  color: var(--yellow); border: 1px solid rgba(251,191,36,.25); }
+    .PATCH   { background: rgba(167,139,250,.12); color: var(--purple); border: 1px solid rgba(167,139,250,.25); }
+    .DELETE  { background: rgba(248,113,113,.12); color: var(--red);    border: 1px solid rgba(248,113,113,.25); }
+    .HEAD    { background: rgba(34,211,238,.12);  color: var(--cyan);   border: 1px solid rgba(34,211,238,.25); }
+    .OPTIONS { background: rgba(139,149,176,.12); color: var(--text2);  border: 1px solid rgba(139,149,176,.2); }
+
+    .req-url-cell  { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; }
+    .req-host      { color: var(--text3); font-size: 10px; }
+    .req-path      { color: var(--text2); }
+    .req-status-cell { font-size: 11px; font-weight: 600; text-align: right; }
+    .req-time-cell   { font-size: 10px; color: var(--text3); text-align: right; }
+
+    /* Status colours */
+    .s2xx { color: var(--green); }
+    .s3xx { color: var(--cyan); }
+    .s4xx { color: var(--yellow); }
+    .s5xx { color: var(--red); }
+    .s0   { color: var(--text3); }
+
+    /* Duration colours */
+    .fast   { color: var(--green); }
+    .medium { color: var(--yellow); }
+    .slow   { color: var(--red); }
+
+    /* In-progress spinner */
+    .spinner {
+      display: inline-block; width: 10px; height: 10px;
+      border: 2px solid var(--border); border-top-color: var(--accent);
+      border-radius: 50%; animation: spin .7s linear infinite;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Detail panel ───────────────────────────────────────────────────── */
+    #detailPanel {
+      flex: 1; display: flex; flex-direction: column;
+      overflow: hidden; min-width: 0;
+    }
+    #detailEmpty {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      color: var(--text3); gap: 8px;
+    }
+    #detailEmpty .ico { font-size: 36px; opacity: .1; user-select: none; }
+    #detailEmpty p    { font-size: 11px; }
+
+    /* Hidden until a row is clicked; JS adds class="show" */
+    #detailContent { flex: 1; display: none; flex-direction: column; overflow: hidden; }
+    #detailContent.show { display: flex; }
+
+    .detail-top {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+      padding: 8px 12px;
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .detail-url {
+      flex: 1; min-width: 0; font-size: 11px; color: var(--text2);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .detail-acts { display: flex; gap: 5px; flex-shrink: 0; }
+
+    /* Tabs */
+    .tabs {
+      display: flex; background: var(--bg2);
+      border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .tab {
+      padding: 7px 14px; cursor: pointer; font-size: 11px;
+      color: var(--text3); border-bottom: 2px solid transparent;
+      transition: color .15s, border-color .15s; white-space: nowrap;
+      user-select: none;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    .tab-pane { display: none; flex: 1; overflow-y: auto; }
+    .tab-pane.active { display: block; }
+
+    /* Content sections */
+    .section { padding: 12px 14px; border-bottom: 1px solid var(--border); }
+    .section-title {
+      font-size: 10px; text-transform: uppercase;
+      letter-spacing: .8px; color: var(--text3);
+      font-weight: 600; margin-bottom: 8px;
+    }
+    .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .meta-item {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 6px 8px;
+    }
+    .meta-label { font-size: 9px; text-transform: uppercase; letter-spacing: .5px; color: var(--text3); margin-bottom: 2px; }
+    .meta-val   { font-size: 12px; color: var(--text); font-weight: 500; }
+
+    .headers-table { width: 100%; border-collapse: collapse; }
+    .headers-table tr:not(:last-child) td { border-bottom: 1px solid var(--border); }
+    .headers-table td { padding: 4px 6px; vertical-align: top; }
+    .headers-table td:first-child {
+      color: var(--accent2); font-size: 11px;
+      white-space: nowrap; width: 35%; font-weight: 500;
+    }
+    .headers-table td:last-child { color: var(--text2); font-size: 11px; word-break: break-all; }
+
+    .code-block {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 10px 10px 10px 10px;
+      font-size: 11px; line-height: 1.6; color: var(--text2);
+      white-space: pre-wrap; word-break: break-all;
+      max-height: 320px; overflow-y: auto; position: relative;
+    }
+    .copy-over {
+      position: absolute; top: 6px; right: 6px;
+      padding: 3px 7px; background: var(--bg4);
+      border: 1px solid var(--border); border-radius: 4px;
+      color: var(--text3); cursor: pointer;
+      font-family: var(--mono); font-size: 10px;
+      opacity: 0; transition: opacity .15s; user-select: none;
+    }
+    .code-block:hover .copy-over { opacity: 1; }
+    .copy-over:hover { color: var(--text); border-color: var(--accent); }
+
+    /* JSON syntax highlighting */
+    .jk { color: var(--accent2); }   /* key    */
+    .js { color: var(--green);   }   /* string */
+    .jn { color: var(--purple);  }   /* number */
+    .jb { color: var(--yellow);  }   /* bool   */
+    .jz { color: var(--text3);   }   /* null   */
+
+    /* ── Status bar ─────────────────────────────────────────────────────── */
+    #statusbar {
+      display: flex; align-items: center; gap: 10px;
+      padding: 4px 12px;
+      background: var(--bg2); border-top: 1px solid var(--border);
+      font-size: 10px; color: var(--text3); flex-shrink: 0;
+    }
+    .rec-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--red); flex-shrink: 0;
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.2} }
+    #statusbar .spacer { flex: 1; }
+
+    /* ── Scrollbars ─────────────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+  </style>
+</head>
+<body>
+
+<!-- ═══ HEADER ════════════════════════════════════════════════════════ -->
+<div id="header">
+  <div class="logo" aria-hidden="true">🔗</div>
+  <div class="title">Rest API <span>Inspector</span></div>
+  <div id="reqCount" style="margin-left:2px"><strong>0</strong> requests</div>
+  <div class="h-spacer"></div>
+  <div class="header-btns">
+    <button class="btn"        id="btnExport" title="Export visible requests as HAR">⬇ Export All</button>
+    <button class="btn danger" id="btnClear"  title="Clear all captured requests">✕ Clear</button>
+  </div>
+</div>
+
+<!-- ═══ TOOLBAR ═══════════════════════════════════════════════════════ -->
+<div id="toolbar">
+  <div class="search-wrap">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <input type="text" id="searchInput"
+           placeholder="Filter by URL, method, or status…"
+           autocomplete="off" spellcheck="false" />
+  </div>
+  <div class="filter-group" id="methodFilters" role="group" aria-label="Filter by HTTP method">
+    <button class="filter-btn active" data-method="ALL">ALL</button>
+    <button class="filter-btn"        data-method="GET">GET</button>
+    <button class="filter-btn"        data-method="POST">POST</button>
+    <button class="filter-btn"        data-method="PUT">PUT</button>
+    <button class="filter-btn"        data-method="PATCH">PATCH</button>
+    <button class="filter-btn"        data-method="DELETE">DEL</button>
+  </div>
+  <button class="btn" id="btnPause">⏸ Pause</button>
+</div>
+
+<!-- ═══ MAIN ══════════════════════════════════════════════════════════ -->
+<div id="main">
+
+  <!-- List panel -->
+  <div id="listPanel">
+    <div class="list-col-hdr" aria-hidden="true">
+      <span>Method</span><span>URL</span>
+      <span style="text-align:right">Status</span>
+      <span style="text-align:right">Time</span>
+    </div>
+    <div id="requestList" role="list"></div>
+  </div>
+
+  <!-- Detail panel -->
+  <div id="detailPanel">
+
+    <div id="detailEmpty">
+      <div class="ico" aria-hidden="true">←</div>
+      <p>Select a request to inspect</p>
+    </div>
+
+    <div id="detailContent">
+
+      <!-- Detail top bar -->
+      <div class="detail-top">
+        <span id="dBadge"  class="mbadge"></span>
+        <span id="dStatus" class="req-status-cell"></span>
+        <span id="dUrl"    class="detail-url"></span>
+        <div class="detail-acts">
+          <button class="btn"         id="btnCurl"     title="Copy as cURL command">Copy cURL</button>
+          <button class="btn primary" id="btnDownload" title="Download as JSON file">⬇ Download</button>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs" role="tablist">
+        <div class="tab active" data-tab="overview"   role="tab">Overview</div>
+        <div class="tab"        data-tab="reqHeaders" role="tab">Req Headers</div>
+        <div class="tab"        data-tab="reqBody"    role="tab">Req Body</div>
+        <div class="tab"        data-tab="resHeaders" role="tab">Res Headers</div>
+        <div class="tab"        data-tab="resBody"    role="tab">Res Body</div>
+      </div>
+
+      <!-- Overview pane -->
+      <div class="tab-pane active" id="pane-overview" role="tabpanel">
+        <div class="section">
+          <div class="section-title">📊 Request Details</div>
+          <div class="meta-grid" id="metaGrid"></div>
+        </div>
+        <div class="section">
+          <div class="section-title">🔗 Full URL</div>
+          <div class="code-block" id="fullUrl">
+            <button class="copy-over" onclick="copyEl('fullUrl')" title="Copy URL">Copy</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Request Headers pane -->
+      <div class="tab-pane" id="pane-reqHeaders" role="tabpanel">
+        <div class="section">
+          <div class="section-title">📤 Request Headers</div>
+          <table class="headers-table" id="tblReqHdr"></table>
+        </div>
+      </div>
+
+      <!-- Request Body pane -->
+      <div class="tab-pane" id="pane-reqBody" role="tabpanel">
+        <div class="section">
+          <div class="section-title">📦 Request Body</div>
+          <div class="code-block" id="reqBodyEl">
+            <button class="copy-over" onclick="copyEl('reqBodyEl')" title="Copy body">Copy</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Response Headers pane -->
+      <div class="tab-pane" id="pane-resHeaders" role="tabpanel">
+        <div class="section">
+          <div class="section-title">📥 Response Headers</div>
+          <table class="headers-table" id="tblResHdr"></table>
+        </div>
+      </div>
+
+      <!-- Response Body pane -->
+      <div class="tab-pane" id="pane-resBody" role="tabpanel">
+        <div class="section">
+          <div class="section-title">📄 Response Body</div>
+          <div class="code-block" id="resBodyEl">
+            <button class="copy-over" onclick="copyEl('resBodyEl')" title="Copy body">Copy</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /#detailContent -->
+  </div><!-- /#detailPanel -->
+</div><!-- /#main -->
+
+<!-- ═══ STATUS BAR ════════════════════════════════════════════════════ -->
+<div id="statusbar">
+  <div class="rec-dot" id="recDot"></div>
+  <span id="sbLeft">Recording</span>
+  <span class="spacer"></span>
+  <span id="sbRight"></span>
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>

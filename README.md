@@ -1,87 +1,170 @@
-<!-- TABLE OF CONTENTS -->
-<details open="open">
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#license">License</a></li>
-  </ol>
-</details>
+# Rest API Inspector
 
-<!-- ABOUT THE PROJECT -->
+<img src="icon128.png" alt="Rest API Inspector" width="128"/>
 
-## About The Project
+> A professional-grade developer tool for capturing, inspecting, filtering, and exporting every REST API call your web app makes — right from the browser toolbar.
 
-![Rest API Inspector](./assets/inspector.png)
+**Chrome Extension · v2.0.0 · Manifest V3 · Zero Data Collection**
 
-REST API Inspector is a Chrome Extension, which helps you inspect all the REST API calls made by any website. Instead of using the Inspect mode of Google Chrome to manually check the REST API calls made by any website, this extension allows a ready visual access. This extension has the below features:
+---
 
-1. **A Ready List**: Get all the REST API calls made by any website
-2. **Time Taken**: Note the time taken by each REST API call
-3. **Status**: See the Pending, Complete or Error status of each REST API call
-4. **API Details**: Understand the request content of the REST API call
-5. **Download**: Download the REST API call content for testing or validation
-6. **Search**: Have an option to search the required API from the list
+## Features
 
-### Built With
+### Core Features
 
-- [Chrome Extension V2](https://developer.chrome.com/docs/extensions/mv2/getstarted/)
-- [JQuery](https://api.jquery.com/)
-- [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+**📡 Live Request Capture**
+Automatically intercepts every `XMLHttpRequest` and `fetch()` call the moment a page loads — no setup, no code changes needed. Works on any website.
 
-<!-- GETTING STARTED -->
+**⏱ In-Progress Indicators**
+Requests appear instantly with a live spinner while in flight. The row updates automatically when the response arrives, showing the final status and exact duration.
 
-## Getting Started
+**⚡ Response Time Tracking**
+Every request is timed from the first byte sent to the last byte received. Duration is colour-coded so slow requests are instantly obvious:
+- `< 300ms` — fast (green)
+- `300ms – 1s` — medium (yellow)
+- `> 1s` — slow (red)
 
-[![REST API Inspector](./icon128.png)]
+**🔍 Method Filtering**
+One-click filters let you focus on only the HTTP methods you care about: `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`. Combine with the text search to pinpoint any specific request instantly.
 
-### Prerequisites
+**🔎 Smart Search**
+Filter the request list in real time by URL, HTTP method name, or status code. Combine with method filters to drill down to exactly what you need.
 
-You should use Chrome Browser and **REST API Inspector** extension should be enabled in the browser
+**🎨 Status Code Colours**
+Every response is immediately colour-coded: green for 2xx success, cyan for 3xx redirects, yellow for 4xx client errors, red for 5xx server errors — scan a list of requests at a glance.
 
-![Extension](./extension.png)
+---
 
-### Installation
+### Request Inspector
 
-Search for REST API Inspector in Chrome Web Store.
-![Extension](./assets/inspector3.png)
+**Five-Tab Detail Panel**
+Click any request to open its complete profile in the right panel. Five dedicated tabs cover every dimension of the exchange:
 
-<!-- USAGE EXAMPLES -->
+| Tab | Contents |
+|-----|----------|
+| Overview | Method, status, duration, request type, timestamp, source page |
+| Req Headers | All request headers in a two-column table |
+| Req Body | Captured request payload |
+| Res Headers | All response headers in a two-column table |
+| Res Body | Full response payload |
 
-## Usage
+**✨ JSON Syntax Highlighting**
+Request and response bodies with valid JSON are automatically pretty-printed and syntax-highlighted — keys, strings, numbers, booleans and nulls each in a distinct colour.
 
-You can refer to the attached clip on how to use the REST API Inspector Plugin after download.
+**📊 Full Headers View**
+All request and response headers listed alphabetically in a clean two-column table. Copy any value with a single click.
 
-Video demonstration (click the picture):
+**📦 Request Body Capture**
+Captures JSON, URL-encoded, FormData, and plain text bodies. Binary and Blob payloads are labelled with their size so you always know what was sent.
 
-[![REST API Inspector](./assets/inspector1.png)](https://youtu.be/w-BY-OHYSZY)
+---
 
-<!-- LICENSE -->
+### Export & Share
+
+**⬇ Export as HAR**
+Export all visible (filtered) requests as a standard `.har.json` file. Compatible with Chrome DevTools, Postman, Charles Proxy, and any HAR-viewer tool (HAR 1.2 format).
+
+**💾 Download Single Request**
+Save any individual request as a self-contained JSON file that includes the method, URL, status, duration, all headers, request body, and response body.
+
+**📋 Copy as cURL**
+One click to copy any selected request as a complete, runnable cURL command — with all headers and body included. Paste straight into a terminal to reproduce the call.
+
+---
+
+### Recording Controls
+
+**⏸ Pause & Resume**
+Freeze capture instantly with the Pause button. Existing requests stay visible for inspection while new ones are ignored. Resume recording with a single click.
+
+**✕ Clear All Requests**
+Wipe the list and start fresh at any time. Useful for isolating just the requests from a specific user action without reloading the page.
+
+**🔢 Live Badge Counter**
+The extension icon badge shows the total number of captured requests for the active tab. Jump straight to the count without opening the panel.
+
+**🌐 Works on All Websites**
+Captures requests on any domain — SPAs, REST APIs, GraphQL endpoints, third-party analytics, and CDN calls. No configuration or allow-lists required.
+
+**📋 Up to 500 Requests**
+Keeps the 500 most recent completed requests per tab in memory. Oldest entries are automatically dropped to keep performance smooth on long-running sessions.
+
+**🔄 Per-Tab Isolation**
+Each browser tab tracks its own independent request log. Switch tabs freely — the inspector always shows requests for whichever tab is currently active.
+
+---
+
+### Privacy
+
+**🔒 100% Private — Data Never Leaves Your Browser**
+
+Rest API Inspector stores all captured requests **in memory only**, scoped to your browser tab. No data is ever sent to any server, logged to disk, shared with third parties, or retained after you close the tab.
+
+The extension requests the minimum necessary permissions: `tabs` and `activeTab` only. No `storage`, no `webRequest`, no background data collection of any kind.
+
+---
+
+## Project Structure
+
+```
+Rest-API-Inspector/
+├── rest-api-inspector/       # Extension source (v2.0.0)
+│   ├── manifest.json         # MV3 manifest
+│   ├── background.js         # Service worker — tab management & badge counter
+│   ├── content.js            # MAIN world script — intercepts XHR & fetch()
+│   ├── bridge.js             # Isolated world bridge — relays events to background
+│   ├── popup.html            # Inspector UI shell
+│   ├── popup.js              # Inspector UI logic — rendering, filters, export
+│   └── icons/
+│       ├── icon16.png
+│       ├── icon48.png
+│       └── icon128.png
+├── icon16.png                # Root-level icons (referenced by store listing)
+├── icon48.png
+├── icon128.png
+├── LICENSE.txt
+└── README.md
+```
+
+---
+
+## Technical Specifications
+
+| Specification | Value |
+|---------------|-------|
+| Manifest | Version 3 (MV3) |
+| Minimum Chrome | Chrome 92+ |
+| Intercepts | XHR + Fetch |
+| Permissions | tabs, activeTab |
+| Request Limit | 500 per tab |
+| Export Formats | HAR 1.2, JSON |
+| Injection Method | MAIN world |
+| Body Size Cap | 500 KB / response |
+
+---
+
+## How to Use
+
+**Step 1 — Install**
+Download the extension from the Chrome Web Store and click **Add to Chrome**. No account or sign-in required.
+
+**Step 2 — Pin**
+Pin the extension to your toolbar via the puzzle-piece icon so the 🔗 icon is always one click away.
+
+**Step 3 — Open the Inspector**
+Open any web app and click the 🔗 icon to launch the inspector. API calls appear in real time as you interact with the page. *No page reload required.*
+
+**Step 4 — Inspect & Export**
+Click any request in the list to inspect its full headers, body, and response. Use the filter buttons or search bar to find specific calls, then export or copy as needed.
+
+---
 
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+MIT License — Copyright (c) 2021 Suman Das
 
-<!-- CONTACT -->
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-## Contact
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-Your Name - [@nerd_dassum](https://twitter.com/nerd_dassum) - sumanentc@gmail.com
-
-Project Link: [Rest-API-Inspector](https://github.com/sumanentc/Rest-API-Inspector)
-
-```
-
-```
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
