@@ -6,6 +6,8 @@
 
 **Chrome Extension · v2.0.0 · Manifest V3 · Zero Data Collection**
 
+![Rest API Inspector UI](rest-api.png)
+
 ---
 
 ## Features
