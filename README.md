@@ -6,6 +6,10 @@
 
 **Chrome Extension · v2.0.0 · Manifest V3 · Zero Data Collection**
 
+![Rest API Inspector Promo](promo-small-440x280.png)
+
+[![Watch the demo on YouTube](https://img.shields.io/badge/YouTube-Watch%20Demo-red?logo=youtube)](https://www.youtube.com/watch?v=drXs7xqBLO4)
+
 ![Rest API Inspector UI](rest-api.png)
 
 ---
